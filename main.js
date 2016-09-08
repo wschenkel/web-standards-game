@@ -12,6 +12,7 @@ var computer = new Computer();
 var ball = new Ball(200, 300);
 
 var keysDown = {};
+var teste = '';
 
 var render = function () {
     context.fillStyle = "#FF00FF";
@@ -104,6 +105,13 @@ Player.prototype.update = function () {
             this.paddle.move(0, 0);
         }
     }
+
+    if (teste === 'a') {
+        this.paddle.move(-4, 0);
+        teste = '';
+    } else if (teste === 'b') {
+        this.paddle.move(4, 0);
+    }
 };
 
 function Ball(x, y) {
@@ -162,6 +170,22 @@ document.body.appendChild(canvas);
 animate(step);
 
 var b = document.getElementById('body');
+
+
+
+b.addEventListener('click', function(event) {
+    teste = 'a';
+});
+
+window.addEventListener('deviceorientation', function(event) {
+    if (event.gamma < -5) {
+        teste = 'a';
+    } else if (event.gamma > 5) {
+        teste = 'b';
+    } else {
+        teste = '';
+    }
+});
 
 window.addEventListener("keydown", function (event) {
     keysDown[event.keyCode] = true;

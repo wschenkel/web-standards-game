@@ -12,6 +12,7 @@ var computer = new Computer();
 var ball = new Ball(200, 300);
 
 var keysDown = {};
+var deviceOrientation = '';
 var teste = '';
 
 var render = function () {
@@ -106,10 +107,10 @@ Player.prototype.update = function () {
         }
     }
 
-    if (teste === 'a') {
+    if (deviceOrientation === 'esquerda') {
         this.paddle.move(-4, 0);
-        teste = '';
-    } else if (teste === 'b') {
+        deviceOrientation = '';
+    } else if (deviceOrientation === 'direita') {
         this.paddle.move(4, 0);
     }
 };
@@ -171,19 +172,18 @@ animate(step);
 
 var b = document.getElementById('body');
 
-
-
-b.addEventListener('click', function(event) {
-    teste = 'a';
-});
+// b.addEventListener('click', function(event) {
+//     deviceOrientation = 'esquerda';
+// });
 
 window.addEventListener('deviceorientation', function(event) {
+    console.log(event.beta);
     if (event.gamma < -5) {
-        teste = 'a';
+        deviceOrientation = 'esquerda';
     } else if (event.gamma > 5) {
-        teste = 'b';
+        deviceOrientation = 'direita';
     } else {
-        teste = '';
+        deviceOrientation = '';
     }
 });
 

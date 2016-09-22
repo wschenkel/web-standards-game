@@ -1,0 +1,18 @@
+* {
+	box-sizing: border-box;
+}
+
+.speech {
+	height: 50px;
+	width: 50px;
+	border-radius: 100%;
+	z-index: 2;
+	position: absolute;
+	top: 10px;
+	left: 450px;
+	-moz-box-shadow: 0 0 5px #888;
+	-webkit-box-shadow: 0 0 5px #888;
+	box-shadow: 0 0 5px #888;
+	cursor: pointer;
+	background: url('microfone.png') no-repeat center center #fff;
+}

@@ -14,6 +14,7 @@ var ball = new Ball(200, 300);
 var keysDown = {};
 var deviceOrientation = '';
 var teste = '';
+var colorCampo = '';
 
 var render = function() {
     context.fillStyle = "#88B550";
@@ -137,6 +138,12 @@ Ball.prototype.update = function(paddle1, paddle2) {
     var bottom_x = this.x + 5;
     var bottom_y = this.y + 5;
 
+    if (colorCampo == 'Black') {
+        console.log('entrou');
+        ball.fillStyle = '#000';
+        colorCampo = "white";
+    }
+
     if (this.x - 5 < 0) {
         this.x = 5;
         this.x_speed = -this.x_speed;
@@ -195,20 +202,60 @@ window.addEventListener("keyup", function(event) {
     delete keysDown[event.keyCode];
 });
 
-// Speech
-var button = document.getElementById("btnSpeech");
-button.onclick = function() {
+// Speech --------------
+var recognition = new webkitSpeechRecognition();
+recognition.continuous = true;
+recognition.interimResults = true;
+
+var speechRecognitionList = new webkitSpeechGrammarList();
+
+var grammar = '#JSGF V1.0; grammar cores; public <cor> = aqua | azure | beige | bisque | black | blue | brown | chocolate | coral | crimson | cyan | fuchsia | ghostwhite | gold | goldenrod | gray | green | indigo | ivory | khaki | lavender | lime | linen | magenta | maroon | moccasin | navy | olive | orange | orchid | peru | pink | plum | purple | red | salmon | sienna | silver | snow | tan | teal | thistle | tomato | turquoise | violet | white | yellow ;'
+speechRecognitionList.addFromString(grammar, 1);
+recognition.grammars = speechRecognitionList;
+
+
+var recognizing,
+    diagnostic;
+
+recognition.onstart = function() {
+    recognizing = true;
+};
+
+recognition.onend = function() {
+    recognizing = false;
+};
+
+recognition.onresult = function(event) {
+    if (typeof(event.results) == 'undefined') {
+        recognition.onend = null;
+        recognition.stop();
+    }
+
+    var color = event.results[0][0].transcript;
+    console.log(color);
+    // body.style.backgroundColor = color;
+    colorCampo = color;
+    console.log(colorCampo + "ColorCampo");
+
+};
+
+var body = document.getElementById("body");
+var button = document.getElementById("btnSpeech").onclick = function() {
+
     if (!('webkitSpeechRecognition' in window)) {
+    
         console.log('Não suporta Speech');
+    
     } else {
-        var grammar = '#JSGF V1.0; grammar corCampo; public <corCampo> = azul | vermelho | preto | amarelo ;',
-        recognition = new SpeechRecognition(),
-        speechRecognitionList = new SpeechGrammarList();
-        
-        speechRecognitionList.addFromString(grammar, 1);
-        recognition.grammars = speechRecognitionList;
+        console.log('Suporta speech.');
+
+        if (recognizing) {
+            recognition.stop();
+        }
 
         recognition.start();
     }
-}
 
+
+
+}

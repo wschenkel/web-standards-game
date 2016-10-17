@@ -15,13 +15,14 @@ var keysDown = {};
 var deviceOrientation = '';
 var teste = '';
 var colorCampo = '';
+var computerBallColor = '#fff';
 
 var render = function() {
     context.fillStyle = "#88B550";
     context.fillRect(0, 0, width, height);
     player.render();
     computer.render();
-    ball.render();
+    ball.render(computerBallColor);
 };
 
 var update = function() {
@@ -123,10 +124,11 @@ function Ball(x, y) {
     this.y_speed = 3;
 }
 
-Ball.prototype.render = function() {
+Ball.prototype.render = function(computerBallColor) {
+    
     context.beginPath();
     context.arc(this.x, this.y, 5, 2 * Math.PI, false);
-    context.fillStyle = "#fff";
+    context.fillStyle = computerBallColor;
     context.fill();
 };
 
@@ -137,12 +139,6 @@ Ball.prototype.update = function(paddle1, paddle2) {
     var top_y = this.y - 5;
     var bottom_x = this.x + 5;
     var bottom_y = this.y + 5;
-
-    if (colorCampo == 'Black') {
-        console.log('entrou');
-        ball.fillStyle = '#000';
-        colorCampo = "white";
-    }
 
     if (this.x - 5 < 0) {
         this.x = 5;
@@ -219,10 +215,13 @@ var recognizing,
 
 recognition.onstart = function() {
     recognizing = true;
+
+    body.className += "recognition-start";
 };
 
 recognition.onend = function() {
     recognizing = false;
+    body.classList.remove("recognition-start");
 };
 
 recognition.onresult = function(event) {
@@ -232,30 +231,30 @@ recognition.onresult = function(event) {
     }
 
     var color = event.results[0][0].transcript;
-    console.log(color);
-    // body.style.backgroundColor = color;
-    colorCampo = color;
-    console.log(colorCampo + "ColorCampo");
-
+    recognition.stop();
+    
+    // console.log(color.trim());
+    if (color.trim() == 'Preto') {
+        computerBallColor = '#000';
+    } else if (color.trim() == 'Amarelo') {
+        computerBallColor = '#FFFF00';
+    } else if (color.trim() == 'branco') {
+        computerBallColor = '#FFFFFF';
+    }
 };
 
 var body = document.getElementById("body");
 var button = document.getElementById("btnSpeech").onclick = function() {
 
     if (!('webkitSpeechRecognition' in window)) {
-    
+
         console.log('Não suporta Speech');
-    
+
     } else {
         console.log('Suporta speech.');
-
         if (recognizing) {
             recognition.stop();
         }
-
         recognition.start();
     }
-
-
-
 }

@@ -125,7 +125,7 @@ function Ball(x, y) {
 }
 
 Ball.prototype.render = function(computerBallColor) {
-    
+    // console.log(computerBallColor);
     context.beginPath();
     context.arc(this.x, this.y, 5, 2 * Math.PI, false);
     context.fillStyle = computerBallColor;
@@ -215,30 +215,35 @@ var recognizing,
 
 recognition.onstart = function() {
     recognizing = true;
-
+    
     body.className += "recognition-start";
 };
 
 recognition.onend = function() {
     recognizing = false;
     body.classList.remove("recognition-start");
+    console.log('on-end');
 };
 
 recognition.onresult = function(event) {
+	
     if (typeof(event.results) == 'undefined') {
         recognition.onend = null;
         recognition.stop();
+        console.log('undefined');
     }
 
     var color = event.results[0][0].transcript;
+
+    console.log(color);
+
     recognition.stop();
     
-    // console.log(color.trim());
-    if (color.trim() == 'Preto') {
+    if (color.trim() == 'Preto' || color.trim() == 'preto') {
         computerBallColor = '#000';
-    } else if (color.trim() == 'Amarelo') {
+    } else if (color.trim() == 'Amarelo' || color.trim() == 'amarelo') {
         computerBallColor = '#FFFF00';
-    } else if (color.trim() == 'branco') {
+    } else if (color.trim() == 'Branco' || color.trim() == 'branco') {
         computerBallColor = '#FFFFFF';
     }
 };

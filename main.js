@@ -197,56 +197,61 @@ window.addEventListener('deviceorientation', function(event) {
 // Speech
 // ------------------------------
 
-var recognition = new webkitSpeechRecognition();
-recognition.continuous = true;
-recognition.interimResults = true;
+if ('webkitSpeechRecognition' in window) {
+    var recognition = new webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
 
-var speechRecognitionList = new webkitSpeechGrammarList();
+    var speechRecognitionList = new webkitSpeechGrammarList();
 
-var grammar = '#JSGF V1.0; grammar cores; public <cor> = aqua | azure | beige | bisque | black | blue | brown | chocolate | coral | crimson | cyan | fuchsia | ghostwhite | gold | goldenrod | gray | green | indigo | ivory | khaki | lavender | lime | linen | magenta | maroon | moccasin | navy | olive | orange | orchid | peru | pink | plum | purple | red | salmon | sienna | silver | snow | tan | teal | thistle | tomato | turquoise | violet | white | yellow ;';
-speechRecognitionList.addFromString(grammar, 1);
-recognition.grammars = speechRecognitionList;
+    var grammar = '#JSGF V1.0; grammar cores; public <cor> = aqua | azure | beige | bisque | black | blue | brown | chocolate | coral | crimson | cyan | fuchsia | ghostwhite | gold | goldenrod | gray | green | indigo | ivory | khaki | lavender | lime | linen | magenta | maroon | moccasin | navy | olive | orange | orchid | peru | pink | plum | purple | red | salmon | sienna | silver | snow | tan | teal | thistle | tomato | turquoise | violet | white | yellow ;';
+    speechRecognitionList.addFromString(grammar, 1);
 
-var recognizing;
+    recognition.grammars = speechRecognitionList;
 
-recognition.onstart = function() {
-    recognizing = true;
-    body.className += 'recognition-start';
-};
+    var recognizing;
+    
+    recognition.onstart = function() {
+        recognizing = true;
+        body.className += 'recognition-start';
+        console.log('speech starting...');
+        console.log('How do you say BLACK in Portuguese?');
+    };
 
-recognition.onend = function() {
-    recognizing = false;
-    body.classList.remove('recognition-start');
-};
+    recognition.onend = function() {
+        recognizing = false;
+        body.classList.remove('recognition-start');
+    };
 
-recognition.onresult = function(event) {
-    if (typeof(event.results) == 'undefined') {
-        recognition.onend = null;
-        recognition.stop();
-    }
-
-    var color = event.results[0][0].transcript;
-    recognition.stop();
-
-    if (color.trim() == 'Preto' || color.trim() == 'preto') {
-        computerBallColor = '#000';
-    } else if (color.trim() == 'Amarelo' || color.trim() == 'amarelo') {
-        computerBallColor = '#FFFF00';
-    } else if (color.trim() == 'Branco' || color.trim() == 'branco') {
-        computerBallColor = '#FFFFFF';
-    }
-};
-
-var body = document.getElementById('body'), button;
-
-button = document.getElementById('btnSpeech').onclick = function() {
-    if (!('webkitSpeechRecognition' in window)) {
-        console.log('Não suporta Speech');
-    } else {
-        console.log('Suporta speech.');
-        if (recognizing) {
+    recognition.onresult = function(event) {
+        if (typeof(event.results) == 'undefined') {
+            recognition.onend = null;
             recognition.stop();
         }
-        recognition.start();
+
+        var color = event.results[0][0].transcript;
+        recognition.stop();
+
+        if (color.trim() == 'Preto' || color.trim() == 'preto') {
+            computerBallColor = '#000';
+        } else if (color.trim() == 'Amarelo' || color.trim() == 'amarelo') {
+            computerBallColor = '#FFFF00';
+        } else if (color.trim() == 'Branco' || color.trim() == 'branco') {
+            computerBallColor = '#FFFFFF';
+        }
+    };
+
+} else {
+    console.log("Não suporta speech.");
+}
+
+
+var body = document.getElementById('body'),
+    button;
+
+button = document.getElementById('btnSpeech').onclick = function() {
+    if (recognizing) {
+        recognition.stop();
     }
+    recognition.start();
 };

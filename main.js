@@ -180,7 +180,7 @@ var b = document.getElementById('body');
 // });
 
 window.addEventListener('deviceorientation', function(event) {
-    console.log(event.beta);
+    // console.log(event.beta);
     if (event.gamma < -5) {
         deviceOrientation = 'esquerda';
     } else if (event.gamma > 5) {
@@ -222,7 +222,7 @@ recognition.onstart = function() {
 recognition.onend = function() {
     recognizing = false;
     body.classList.remove("recognition-start");
-    console.log('on-end');
+    // console.log('on-end');
 };
 
 recognition.onresult = function(event) {
@@ -230,7 +230,7 @@ recognition.onresult = function(event) {
     if (typeof(event.results) == 'undefined') {
         recognition.onend = null;
         recognition.stop();
-        console.log('undefined');
+        // console.log('undefined');
     }
 
     var color = event.results[0][0].transcript;

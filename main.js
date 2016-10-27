@@ -1,7 +1,8 @@
 var animate = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function(callback) {
-    window.setTimeout(callback, 1000 / 60)
+    window.setTimeout(callback, 1000 / 60);
 };
-var canvas = document.createElement("canvas");
+
+var canvas = document.createElement('canvas');
 var width = 400;
 var height = 600;
 canvas.width = width;
@@ -13,12 +14,10 @@ var ball = new Ball(200, 300);
 
 var keysDown = {};
 var deviceOrientation = '';
-var teste = '';
-var colorCampo = '';
 var computerBallColor = '#fff';
 
 var render = function() {
-    context.fillStyle = "#88B550";
+    context.fillStyle = '#88B550';
     context.fillRect(0, 0, width, height);
     player.render();
     computer.render();
@@ -47,7 +46,7 @@ function Paddle(x, y, width, height) {
 }
 
 Paddle.prototype.render = function() {
-    context.fillStyle = "#000";
+    context.fillStyle = '#000';
     context.fillRect(this.x, this.y, this.width, this.height);
 };
 
@@ -109,10 +108,10 @@ Player.prototype.update = function() {
         }
     }
 
-    if (deviceOrientation === 'esquerda') {
+    if (deviceOrientation === 'left') {
         this.paddle.move(-4, 0);
         deviceOrientation = '';
-    } else if (deviceOrientation === 'direita') {
+    } else if (deviceOrientation === 'right') {
         this.paddle.move(4, 0);
     }
 };
@@ -125,7 +124,6 @@ function Ball(x, y) {
 }
 
 Ball.prototype.render = function(computerBallColor) {
-    // console.log(computerBallColor);
     context.beginPath();
     context.arc(this.x, this.y, 5, 2 * Math.PI, false);
     context.fillStyle = computerBallColor;
@@ -173,72 +171,63 @@ Ball.prototype.update = function(paddle1, paddle2) {
 document.body.appendChild(canvas);
 animate(step);
 
-var b = document.getElementById('body');
+window.addEventListener('keydown', function(event) {
+    keysDown[event.keyCode] = true;
+});
 
-// b.addEventListener('click', function(event) {
-//     deviceOrientation = 'esquerda';
-// });
+window.addEventListener('keyup', function(event) {
+    delete keysDown[event.keyCode];
+});
+
+// ------------------------------
+// Device Orientation
+// ------------------------------
 
 window.addEventListener('deviceorientation', function(event) {
-    // console.log(event.beta);
     if (event.gamma < -5) {
-        deviceOrientation = 'esquerda';
+        deviceOrientation = 'left';
     } else if (event.gamma > 5) {
-        deviceOrientation = 'direita';
+        deviceOrientation = 'right';
     } else {
         deviceOrientation = '';
     }
 });
 
-window.addEventListener("keydown", function(event) {
-    keysDown[event.keyCode] = true;
-});
+// ------------------------------
+// Speech
+// ------------------------------
 
-window.addEventListener("keyup", function(event) {
-    delete keysDown[event.keyCode];
-});
-
-// Speech --------------
 var recognition = new webkitSpeechRecognition();
 recognition.continuous = true;
 recognition.interimResults = true;
 
 var speechRecognitionList = new webkitSpeechGrammarList();
 
-var grammar = '#JSGF V1.0; grammar cores; public <cor> = aqua | azure | beige | bisque | black | blue | brown | chocolate | coral | crimson | cyan | fuchsia | ghostwhite | gold | goldenrod | gray | green | indigo | ivory | khaki | lavender | lime | linen | magenta | maroon | moccasin | navy | olive | orange | orchid | peru | pink | plum | purple | red | salmon | sienna | silver | snow | tan | teal | thistle | tomato | turquoise | violet | white | yellow ;'
+var grammar = '#JSGF V1.0; grammar cores; public <cor> = aqua | azure | beige | bisque | black | blue | brown | chocolate | coral | crimson | cyan | fuchsia | ghostwhite | gold | goldenrod | gray | green | indigo | ivory | khaki | lavender | lime | linen | magenta | maroon | moccasin | navy | olive | orange | orchid | peru | pink | plum | purple | red | salmon | sienna | silver | snow | tan | teal | thistle | tomato | turquoise | violet | white | yellow ;';
 speechRecognitionList.addFromString(grammar, 1);
 recognition.grammars = speechRecognitionList;
 
-
-var recognizing,
-    diagnostic;
+var recognizing;
 
 recognition.onstart = function() {
     recognizing = true;
-    
-    body.className += "recognition-start";
+    body.className += 'recognition-start';
 };
 
 recognition.onend = function() {
     recognizing = false;
-    body.classList.remove("recognition-start");
-    // console.log('on-end');
+    body.classList.remove('recognition-start');
 };
 
 recognition.onresult = function(event) {
-	
     if (typeof(event.results) == 'undefined') {
         recognition.onend = null;
         recognition.stop();
-        // console.log('undefined');
     }
 
     var color = event.results[0][0].transcript;
-
-    console.log(color);
-
     recognition.stop();
-    
+
     if (color.trim() == 'Preto' || color.trim() == 'preto') {
         computerBallColor = '#000';
     } else if (color.trim() == 'Amarelo' || color.trim() == 'amarelo') {
@@ -248,13 +237,11 @@ recognition.onresult = function(event) {
     }
 };
 
-var body = document.getElementById("body");
-var button = document.getElementById("btnSpeech").onclick = function() {
+var body = document.getElementById('body'), button;
 
+button = document.getElementById('btnSpeech').onclick = function() {
     if (!('webkitSpeechRecognition' in window)) {
-
         console.log('Não suporta Speech');
-
     } else {
         console.log('Suporta speech.');
         if (recognizing) {
@@ -262,4 +249,4 @@ var button = document.getElementById("btnSpeech").onclick = function() {
         }
         recognition.start();
     }
-}
+};
